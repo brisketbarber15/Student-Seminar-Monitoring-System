@@ -21,10 +21,9 @@ import java.time.LocalDate;
 
 /*
 validate in attendance if information entered existed
-create logic for update and delete selected and clear buttons
+create logic for clear
 add exit program buton
-fix about us and add back button
-connect to database 
+about us 
 */
 
 
@@ -85,6 +84,10 @@ public class MainFrame extends javax.swing.JFrame {
     private DefaultTableModel seminarTable;
     private DefaultTableModel attendanceTable;
     
+    private JTable studentJTable;
+    private JTable seminarJTable;
+    private JTable attendanceJTable;
+    
     private JScrollPane outputStudent;
     private JScrollPane outputSeminar;
     private JScrollPane outputAttendance;
@@ -123,9 +126,13 @@ public class MainFrame extends javax.swing.JFrame {
         seminarTable = new DefaultTableModel(seminarColumns, 0);
         attendanceTable = new DefaultTableModel(attendanceColumns, 0);
         
-        outputStudent = new JScrollPane(new JTable(studentTable));
-        outputSeminar = new JScrollPane(new JTable(seminarTable));
-        outputAttendance = new JScrollPane(new JTable(attendanceTable));
+        studentJTable = new JTable(studentTable);
+        seminarJTable = new JTable(seminarTable);
+        attendanceJTable = new JTable(attendanceTable);
+        
+        outputStudent = new JScrollPane(studentJTable);
+        outputSeminar = new JScrollPane(seminarJTable);
+        outputAttendance = new JScrollPane(attendanceJTable);
         
         displayTable();
         
@@ -310,28 +317,8 @@ public class MainFrame extends javax.swing.JFrame {
     
     private void addEntryForStudent(){     
         outputPanel.removeAll();
-       
-        String studentId = inputStudentId.getText();
-        String firstName = inputFirstName.getText();
-        String middleInitial = inputMiddleInitial.getText();
-        String lastName = inputLastName.getText();
-        Object age = inputAge.getValue();
-        Object gender = inputGender.getSelectedItem();
-        String address = inputAddress.getText();
-        String course = inputCourse.getText();
-        Object yearLevel = inputYearLevel.getValue();
-        
-        Object[] rowData = {
-            studentId, 
-            firstName, 
-            middleInitial, 
-            lastName, 
-            age, 
-            gender, 
-            address, 
-            course, 
-            yearLevel
-        };
+
+        Object[] rowData = parseField();
         
         if(!isValid(rowData, false)){
             return;
@@ -380,19 +367,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void addEntryForSeminar(){       
         outputPanel.removeAll();
         
-        String seminarId = inputSeminarId.getText();
-        String title = inputTitle.getText();
-        String venue = inputVenue.getText();
-        String dateTo = inputDateTo.getText();
-        String dateFrom = inputDateFrom.getText();
-        
-        Object[] rowData = {
-            seminarId, 
-            title, 
-            venue, 
-            dateTo, 
-            dateFrom
-        };
+        Object[] rowData = parseField();
         
         if(!isValid(rowData, true)){
             return;
@@ -437,21 +412,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void addEntryForAttendance(){      
         outputPanel.removeAll();
         
-        String attendanceId = inputAttendanceId.getText();
-        String studentName = inputStudentName.getText();
-        String seminarTitle = inputSeminarTitle.getText();
-        Object semester = inputSemester.getValue();
-        Object schoolYear = inputSchoolYear.getValue();
-        String fee = inputFee.getText();
-        
-        Object[] rowData = {
-            attendanceId, 
-            studentName, 
-            seminarTitle, 
-            semester, 
-            schoolYear, 
-            fee
-        };
+        Object[] rowData = parseField();
         
         if(!isValid(rowData, false)){
             return;
@@ -653,9 +614,236 @@ public class MainFrame extends javax.swing.JFrame {
         return true;
     }
     
+    private void updateSelectedRow(){
+        String name = "";
+        int selectedRow = -1;
+        int id = -1;
+        
+        switch(currentState){
+            case 1:
+                name = "student";
+                selectedRow = studentJTable.getSelectedRow();
+                
+                if(selectedRow == -1){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to update.");
+                    return;
+                }
+                
+                id = (int) studentJTable.getValueAt(selectedRow, 0);
+                break;
+            case 2:
+                name = "seminar";
+                selectedRow = seminarJTable.getSelectedRow();
+                
+                if(selectedRow == -1){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to update.");
+                    return;
+                }
+                
+                id = (int) seminarJTable.getValueAt(selectedRow, 0);        
+                break;
+            case 3:
+                name = "attendance";
+                selectedRow = attendanceJTable.getSelectedRow();
+                
+                if(selectedRow == -1){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to update.");
+                    return;
+                }
+                
+                id = (int) attendanceJTable.getValueAt(selectedRow, 0);        
+                break;
+        }
+        
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to update this student?",
+            "Confirm Update",
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
+        
+        if(confirm == javax.swing.JOptionPane.YES_OPTION){
+            Object[] newRow = parseField();
+            if(newRow == null){
+                javax.swing.JOptionPane.showMessageDialog(this, "Failed to parse new data.");
+            }
+            
+            String sql = "";
+            
+            switch(currentState){
+                case 1:
+                    sql = "UPDATE student SET student_id = ?, first_name = ?, middle_initial = ?, last_name = ?, age = ?, gender = ?, address = ?, course = ?, year_level = ? WHERE student_id = ?";
+                    break;
+                case 2:
+                    sql = "UPDATE seminar SET seminar_id = ?, title = ?, venue = ?, date_to = ?, date_from = ? WHERE seminar_id = ?";
+                    break;
+                case 3:
+                    sql = "UPDATE attendance SET attendance_id = ?, student_name = ?, seminar_title = ?, semester = ?, school_year = ?, fee = ? WHERE attendance_id = ?";
+                    break;
+            }
+        
+            try{
+                Connection con = DBConn.getConnection();
+                PreparedStatement pstmt = con.prepareStatement(sql);
+                
+                for (int i = 0; i < newRow.length; i++) {
+                    pstmt.setObject(i + 1, newRow[i]);
+                }
+               
+                pstmt.setInt(newRow.length + 1, id);
+                int rowsUpdated = pstmt.executeUpdate();
+                
+                if(rowsUpdated > 0){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Record update successfully!");
+                    displayTable();
+                }else{
+                    javax.swing.JOptionPane.showMessageDialog(this, "Failed to update record.");
+                }
+
+                pstmt.close();
+                con.close();
+            }catch (Exception e){
+                javax.swing.JOptionPane.showMessageDialog(this, "Error updating record: " + e.getMessage());
+            }
+        }
+    }
     
+    private void deleteSelectedRow(){
+        String name = "";
+        int selectedRow = -1;
+        int id = -1;
+        
+        switch(currentState){
+            case 1:
+                name = "student";
+                selectedRow = studentJTable.getSelectedRow();
+                
+                if(selectedRow == -1){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to delete.");
+                    return;
+                }
+                
+                id = (int) studentJTable.getValueAt(selectedRow, 0);
+                break;
+            case 2:
+                name = "seminar";
+                selectedRow = seminarJTable.getSelectedRow();
+                
+                if(selectedRow == -1){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to delete.");
+                    return;
+                }
+                
+                id = (int) seminarJTable.getValueAt(selectedRow, 0);        
+                break;
+            case 3:
+                name = "attendance";
+                selectedRow = attendanceJTable.getSelectedRow();
+                
+                if(selectedRow == -1){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to delete.");
+                    return;
+                }
+                
+                id = (int) attendanceJTable.getValueAt(selectedRow, 0);        
+                break;
+        }
+        
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+            this,
+            "Are you sure you want to delete this " + name + "?",
+            "Confirm Delete",
+            javax.swing.JOptionPane.YES_NO_OPTION
+        );
+        
+        if(confirm == javax.swing.JOptionPane.YES_OPTION){
+            Connection con = DBConn.getConnection();
+            try{
+                String sql = "DELETE FROM " + name + " WHERE " + name + "_id = ?";
+                PreparedStatement pstmt = con.prepareStatement(sql);
+                pstmt.setInt(1, id);
+                int rowsDeleted = pstmt.executeUpdate();
+
+                if(rowsDeleted > 0){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Record deleted successfully!");
+                    displayTable();
+                }else{
+                    javax.swing.JOptionPane.showMessageDialog(this, "Failed to delete record.");
+                }
+
+                pstmt.close();
+                con.close();
+            }catch (Exception e){
+                javax.swing.JOptionPane.showMessageDialog(this, "Error deleting record: " + e.getMessage());
+            }
+        }
+    }
     
-    
+    private Object[] parseField(){
+        switch(currentState){
+            case 1:
+                String studentId = inputStudentId.getText();
+                String firstName = inputFirstName.getText();
+                String middleInitial = inputMiddleInitial.getText();
+                String lastName = inputLastName.getText();
+                Object age = inputAge.getValue();
+                Object gender = inputGender.getSelectedItem();
+                String address = inputAddress.getText();
+                String course = inputCourse.getText();
+                Object yearLevel = inputYearLevel.getValue();
+
+                Object[] rowStudent = {
+                    studentId, 
+                    firstName, 
+                    middleInitial, 
+                    lastName, 
+                    age, 
+                    gender, 
+                    address, 
+                    course, 
+                    yearLevel
+                };
+                
+                return rowStudent;
+            case 2:
+                String seminarId = inputSeminarId.getText();
+                String title = inputTitle.getText();
+                String venue = inputVenue.getText();
+                String dateTo = inputDateTo.getText();
+                String dateFrom = inputDateFrom.getText();
+                
+                Object[] rowSeminar = {
+                    seminarId, 
+                    title, 
+                    venue, 
+                    dateTo, 
+                    dateFrom
+                };
+                
+                return rowSeminar;
+                
+            case 3:
+                String attendanceId = inputAttendanceId.getText();
+                String studentName = inputStudentName.getText();
+                String seminarTitle = inputSeminarTitle.getText();
+                Object semester = inputSemester.getValue();
+                Object schoolYear = inputSchoolYear.getValue();
+                String fee = inputFee.getText();
+
+                Object[] rowAttendance = {
+                    attendanceId, 
+                    studentName, 
+                    seminarTitle, 
+                    semester, 
+                    schoolYear, 
+                    fee
+                };
+                
+                return rowAttendance;
+        }
+        
+        return null;
+    }
     
     
     
@@ -769,8 +957,10 @@ public class MainFrame extends javax.swing.JFrame {
         addButton.addActionListener(this::addButtonActionPerformed);
 
         updateButton.setText("Update Selected");
+        updateButton.addActionListener(this::updateButtonActionPerformed);
 
         deleteButton.setText("Delete Selected");
+        deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
         clearButton.setText("Clear");
 
@@ -927,6 +1117,16 @@ public class MainFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Please add to tables first");
         }
     }//GEN-LAST:event_addButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        // TODO add your handling code here:
+        deleteSelectedRow();
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
+    private void updateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButtonActionPerformed
+        // TODO add your handling code here:
+        updateSelectedRow();
+    }//GEN-LAST:event_updateButtonActionPerformed
 
     /**
      * @param args the command line arguments
