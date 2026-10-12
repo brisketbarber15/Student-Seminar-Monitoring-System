@@ -127,6 +127,8 @@ public class MainFrame extends javax.swing.JFrame {
         outputSeminar = new JScrollPane(new JTable(seminarTable));
         outputAttendance = new JScrollPane(new JTable(attendanceTable));
         
+        displayTable();
+        
         outputPanel.setLayout(new BorderLayout());
         outputPanel.add(outputStudent, BorderLayout.CENTER);
     }
@@ -344,7 +346,32 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        studentTable.addRow(rowData);
+        try{
+            Connection con = DBConn.getConnection();
+            
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM student");
+            
+            while(rs.next()){
+                Object[] row = {
+                    rs.getInt("student_id"),
+                    rs.getString("first_name"),
+                    rs.getString("middle_initial"),
+                    rs.getString("last_name"),
+                    rs.getInt("age"),
+                    rs.getString("gender"),
+                    rs.getString("address"),
+                    rs.getString("course"),
+                    rs.getInt("year_level")
+                };
+                
+                studentTable.addRow(row);
+            }
+            
+            con.close();
+        }catch(SQLException e){
+            javax.swing.JOptionPane.showMessageDialog(this, "Connection failed! " + e.getMessage());
+        }
         
         displayTable();
         clearFields();
@@ -371,7 +398,7 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        String query = "INSERT INTO student (seminar_id, title, venue, date_to, date_from) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO seminar (seminar_id, title, venue, date_to, date_from) VALUES (?, ?, ?, ?, ?)";
         
         boolean added = addToDatabase(rowData, query);
         
@@ -380,7 +407,28 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        seminarTable.addRow(rowData);
+        try{
+            Connection con = DBConn.getConnection();
+            
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM seminar");
+            
+            while(rs.next()){
+                Object[] row = {
+                    rs.getInt("seminar_id"),
+                    rs.getString("title"),
+                    rs.getString("venue"),
+                    rs.getString("date_to"),
+                    rs.getString("date_from")
+                };
+                
+                seminarTable.addRow(row);
+            }
+            
+            con.close();
+        }catch(SQLException e){
+            javax.swing.JOptionPane.showMessageDialog(this, "Connection failed! " + e.getMessage());
+        }
         
         displayTable();
         clearFields();
@@ -409,7 +457,7 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        String query = "INSERT INTO student (attendance_id, student_name, seminar_title, semester, school_year, fee) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO attendance (attendance_id, student_name, seminar_title, semester, school_year, fee) VALUES (?, ?, ?, ?, ?, ?)";
         
         boolean added = addToDatabase(rowData, query);
         
@@ -418,7 +466,29 @@ public class MainFrame extends javax.swing.JFrame {
             return;
         }
         
-        attendanceTable.addRow(rowData);
+        try{
+            Connection con = DBConn.getConnection();
+            
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM attendance");
+            
+            while(rs.next()){
+                Object[] row = {
+                    rs.getInt("attendance_id"),
+                    rs.getString("student_name"),
+                    rs.getString("seminar_title"),
+                    rs.getInt("semester"),
+                    rs.getInt("school_year"),
+                    rs.getDouble("fee")
+                };
+                
+                attendanceTable.addRow(row);
+            }
+            
+            con.close();
+        }catch(SQLException e){
+            javax.swing.JOptionPane.showMessageDialog(this, "Connection failed! " + e.getMessage());
+        }
         
         displayTable();
         clearFields();
@@ -451,19 +521,81 @@ public class MainFrame extends javax.swing.JFrame {
         return true;
     }
     
-    private void displayTable(){
+    private void displayTable(){      
         outputPanel.removeAll();
         
-        switch(currentState){
-            case 1:
-                outputPanel.add(outputStudent);
-                break;
-            case 2:
-                outputPanel.add(outputSeminar);
-                break;
-            case 3:
-                outputPanel.add(outputAttendance);
-                break;
+        try{
+            Connection con = DBConn.getConnection();
+            Statement stmt = con.createStatement();
+            
+            switch(currentState){
+                case 1:
+                    studentTable.setRowCount(0);
+                    
+                    ResultSet rsStudent = stmt.executeQuery("SELECT * FROM student");
+            
+                    while(rsStudent.next()){
+                        Object[] row = {
+                            rsStudent.getInt("student_id"),
+                            rsStudent.getString("first_name"),
+                            rsStudent.getString("middle_initial"),
+                            rsStudent.getString("last_name"),
+                            rsStudent.getInt("age"),
+                            rsStudent.getString("gender"),
+                            rsStudent.getString("address"),
+                            rsStudent.getString("course"),
+                            rsStudent.getInt("year_level")
+                        };
+
+                        studentTable.addRow(row);
+                    }
+                    
+                    outputPanel.add(outputStudent);
+                    break;
+                case 2:
+                    seminarTable.setRowCount(0);
+                    
+                    ResultSet rsSeminar = stmt.executeQuery("SELECT * FROM seminar");
+            
+                    while(rsSeminar.next()){
+                        Object[] row = {
+                            rsSeminar.getInt("seminar_id"),
+                            rsSeminar.getString("title"),
+                            rsSeminar.getString("venue"),
+                            rsSeminar.getString("date_to"),
+                            rsSeminar.getString("date_from")
+                        };
+
+                        seminarTable.addRow(row);
+                    }
+                    
+                    outputPanel.add(outputSeminar);
+                    break;
+                case 3:
+                    attendanceTable.setRowCount(0);
+                    
+                    ResultSet rsAttendance = stmt.executeQuery("SELECT * FROM attendance");
+            
+                    while(rsAttendance.next()){
+                        Object[] row = {
+                            rsAttendance.getInt("attendance_id"),
+                            rsAttendance.getString("student_name"),
+                            rsAttendance.getString("seminar_title"),
+                            rsAttendance.getInt("semester"),
+                            rsAttendance.getInt("school_year"),
+                            rsAttendance.getDouble("fee")
+                        };
+
+                        attendanceTable.addRow(row);
+                    }
+                    
+                    outputPanel.add(outputAttendance);
+                    break;
+            }
+            
+            con.close();
+        }catch(SQLException e){
+            javax.swing.JOptionPane.showMessageDialog(this, "Connection failed! " + e.getMessage());
         }
         
         outputPanel.revalidate();
