@@ -16,6 +16,7 @@ import javax.swing.table.*;
 import database.DBConn;
 import java.text.SimpleDateFormat;
 import java.lang.Object;
+import java.time.LocalDate;
 
 
 /*
@@ -330,8 +331,16 @@ public class MainFrame extends javax.swing.JFrame {
             yearLevel
         };
         
-        if(!isValid(rowData)){
-            JOptionPane.showMessageDialog(null, "Please complete all the fields before addding entry.");
+        if(!isValid(rowData, false)){
+            return;
+        }
+        
+        String query = "INSERT INTO student (student_id, first_name, middle_initial, last_name, age, gender, address, course, year_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        boolean added = addToDatabase(rowData, query);
+        
+        if(!added){
+            displayTable();
             return;
         }
         
@@ -358,6 +367,19 @@ public class MainFrame extends javax.swing.JFrame {
             dateFrom
         };
         
+        if(!isValid(rowData, true)){
+            return;
+        }
+        
+        String query = "INSERT INTO student (seminar_id, title, venue, date_to, date_from) VALUES (?, ?, ?, ?, ?)";
+        
+        boolean added = addToDatabase(rowData, query);
+        
+        if(!added){
+            displayTable();
+            return;
+        }
+        
         seminarTable.addRow(rowData);
         
         displayTable();
@@ -383,17 +405,48 @@ public class MainFrame extends javax.swing.JFrame {
             fee
         };
         
+        if(!isValid(rowData, false)){
+            return;
+        }
+        
+        String query = "INSERT INTO student (attendance_id, student_name, seminar_title, semester, school_year, fee) VALUES (?, ?, ?, ?, ?, ?)";
+        
+        boolean added = addToDatabase(rowData, query);
+        
+        if(!added){
+            displayTable();
+            return;
+        }
+        
         attendanceTable.addRow(rowData);
         
         displayTable();
         clearFields();
     }
     
-    private boolean isValid(Object[] inputs){
+    private boolean isValid(Object[] inputs, boolean hasDate){
         for(int i=0; i<inputs.length; i++){
             if(inputs[i].equals("")){
+                JOptionPane.showMessageDialog(null, "Please complete all the fields before addding entry.");
                 return false;
             }
+        }
+        
+        if(hasDate){
+            try{
+                LocalDate.parse(inputs[3].toString());
+                LocalDate.parse(inputs[4].toString());
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Please enter date fields in ISO 8601 (yyyy-mm-dd).");
+                return false;
+            }
+        }
+        
+        try{
+            Integer.parseInt(inputs[0].toString());
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "ID must be numeric.");
+            return false;
         }
         return true;
     }
@@ -448,6 +501,26 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
     
+    private boolean addToDatabase(Object[] params, String query){
+        try{
+            Connection con = DBConn.getConnection();
+            PreparedStatement pstmt = con.prepareStatement(query);
+            
+            for(int i=0; i<params.length; i++){
+                pstmt.setObject(i + 1, params[i]);
+            }
+
+            pstmt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Record added successfully!");
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(this, "Database Error: " + ex.getMessage());
+            return false;
+        }
+        
+        return true;
+    }
+    
     
     
     
@@ -479,7 +552,7 @@ public class MainFrame extends javax.swing.JFrame {
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    public MainFrame() {      
         currentState = 1;
         
         initComponents();
@@ -579,27 +652,27 @@ public class MainFrame extends javax.swing.JFrame {
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
+            .addGroup(sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(studentButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(seminarButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(attendanceButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(studentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(seminarButton, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                    .addComponent(attendanceButton, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                    .addComponent(jSeparator1)
+                    .addComponent(updateButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clearButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(studentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(seminarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -609,7 +682,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -617,7 +690,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addGap(48, 48, 48))
         );
 
         outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Panel"));
@@ -674,6 +747,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void aboutUsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutUsButtonActionPerformed
