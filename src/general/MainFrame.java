@@ -9,19 +9,18 @@ package general;
  * @author Ryan
  */
 import java.sql.*;
-import java.io.*;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import database.DBConn;
-import java.text.SimpleDateFormat;
 import java.lang.Object;
 import java.time.LocalDate;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 /*
 validate in attendance if information entered existed
-create logic for clear
 add exit program buton
 about us 
 */
@@ -30,7 +29,6 @@ about us
 public class MainFrame extends javax.swing.JFrame {
     int currentState;
 
-    // Student individual components
     private JTextField inputStudentId;
     private JTextField inputFirstName;
     private JTextField inputMiddleInitial;
@@ -51,7 +49,6 @@ public class MainFrame extends javax.swing.JFrame {
     private JLabel promptCourse;
     private JLabel promptYearsLevel;
 
-    // Seminar individual components
     private JTextField inputSeminarId;
     private JTextField inputTitle;
     private JTextField inputVenue;
@@ -64,7 +61,6 @@ public class MainFrame extends javax.swing.JFrame {
     private JLabel promptDateTo;
     private JLabel promptDateFrom;
 
-    // Attendance individual components
     private JTextField inputAttendanceId;
     private JTextField inputStudentName;
     private JTextField inputSeminarTitle;
@@ -79,7 +75,6 @@ public class MainFrame extends javax.swing.JFrame {
     private JLabel promptSchoolYear;
     private JLabel promptFee;
 
-    // Tables
     private DefaultTableModel studentTable;
     private DefaultTableModel seminarTable;
     private DefaultTableModel attendanceTable;
@@ -133,6 +128,91 @@ public class MainFrame extends javax.swing.JFrame {
         outputStudent = new JScrollPane(studentJTable);
         outputSeminar = new JScrollPane(seminarJTable);
         outputAttendance = new JScrollPane(attendanceJTable);
+        
+        studentJTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+
+                    int selectedRow = studentJTable.getSelectedRow();
+
+                    if (selectedRow != -1) {
+                        int modelRow = studentJTable.convertRowIndexToModel(selectedRow);
+                        Object col0 = studentJTable.getModel().getValueAt(modelRow, 0);
+                        Object col1 = studentJTable.getModel().getValueAt(modelRow, 1);
+                        Object col2 = studentJTable.getModel().getValueAt(modelRow, 2);
+                        Object col3 = studentJTable.getModel().getValueAt(modelRow, 3);
+                        Object col4 = studentJTable.getModel().getValueAt(modelRow, 4);
+                        Object col5 = studentJTable.getModel().getValueAt(modelRow, 5);
+                        Object col6 = studentJTable.getModel().getValueAt(modelRow, 6);
+                        Object col7 = studentJTable.getModel().getValueAt(modelRow, 7);
+                        Object col8 = studentJTable.getModel().getValueAt(modelRow, 8);
+
+                        inputStudentId.setText(col0.toString());
+                        inputFirstName.setText(col1.toString());
+                        inputMiddleInitial.setText(col2.toString());
+                        inputLastName.setText(col3.toString());
+                        inputAge.setValue(col4);
+                        inputGender.setSelectedIndex(col5.toString().equals("Male") ? 0 : 1);
+                        inputAddress.setText(col6.toString());
+                        inputCourse.setText(col7.toString());
+                        inputYearLevel.setValue(col8);
+                    }
+                }
+            }
+        });
+        
+        seminarJTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+
+                    int selectedRow = seminarJTable.getSelectedRow();
+
+                    if (selectedRow != -1) {
+                        int modelRow = seminarJTable.convertRowIndexToModel(selectedRow);
+                        Object col0 = seminarJTable.getModel().getValueAt(modelRow, 0);
+                        Object col1 = seminarJTable.getModel().getValueAt(modelRow, 1);
+                        Object col2 = seminarJTable.getModel().getValueAt(modelRow, 2);
+                        Object col3 = seminarJTable.getModel().getValueAt(modelRow, 3);
+                        Object col4 = seminarJTable.getModel().getValueAt(modelRow, 4);
+
+                        inputSeminarId.setText(col0.toString());
+                        inputTitle.setText(col1.toString());
+                        inputVenue.setText(col2.toString());
+                        inputDateTo.setText(col3.toString());
+                        inputDateFrom.setText(col4.toString());
+                    }
+                }
+            }
+        });
+        
+        attendanceJTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+
+                    int selectedRow = attendanceJTable.getSelectedRow();
+
+                    if (selectedRow != -1) {
+                        int modelRow = attendanceJTable.convertRowIndexToModel(selectedRow);
+                        Object col0 = attendanceJTable.getModel().getValueAt(modelRow, 0);
+                        Object col1 = attendanceJTable.getModel().getValueAt(modelRow, 1);
+                        Object col2 = attendanceJTable.getModel().getValueAt(modelRow, 2);
+                        Object col3 = attendanceJTable.getModel().getValueAt(modelRow, 3);
+                        Object col4 = attendanceJTable.getModel().getValueAt(modelRow, 4);
+                        Object col5 = attendanceJTable.getModel().getValueAt(modelRow, 5);
+
+                        inputAttendanceId.setText(col0.toString());
+                        inputStudentName.setText(col1.toString());
+                        inputSeminarTitle.setText(col2.toString());
+                        inputSemester.setValue(col3);
+                        inputSchoolYear.setValue(col4);
+                        inputFee.setText(col5.toString());
+                    }
+                }
+            }
+        });
         
         displayTable();
         
@@ -570,25 +650,25 @@ public class MainFrame extends javax.swing.JFrame {
                 inputFirstName.setText("");
                 inputMiddleInitial.setText("");
                 inputLastName.setText("");
-                inputAge.setValue(0);
+                inputAge.setValue(18);
                 inputGender.setSelectedIndex(0);
                 inputAddress.setText("");
                 inputCourse.setText("");
-                inputYearLevel.setValue(0);
+                inputYearLevel.setValue(1);
                 break;
             case 2:
                 inputSeminarId.setText("");
                 inputTitle.setText("");
                 inputVenue.setText("");
-                inputDateTo.setText("");
-                inputDateFrom.setText("");
+                inputDateTo.setText("yyyy-mm-dd");
+                inputDateFrom.setText("yyyy-mm-dd");
                 break;
             case 3:
                 inputAttendanceId.setText("");
                 inputStudentName.setText("");
                 inputSeminarTitle.setText("");
-                inputSemester.setValue(0);
-                inputSchoolYear.setValue(0);
+                inputSemester.setValue(1);
+                inputSchoolYear.setValue(2026);
                 inputFee.setText("");
                 break;
         }
@@ -628,7 +708,6 @@ public class MainFrame extends javax.swing.JFrame {
                     javax.swing.JOptionPane.showMessageDialog(this, "Please select a record to update.");
                     return;
                 }
-                
                 id = (int) studentJTable.getValueAt(selectedRow, 0);
                 break;
             case 2:
@@ -706,6 +785,7 @@ public class MainFrame extends javax.swing.JFrame {
                 javax.swing.JOptionPane.showMessageDialog(this, "Error updating record: " + e.getMessage());
             }
         }
+        clearFields();
     }
     
     private void deleteSelectedRow(){
@@ -846,27 +926,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
     /**
@@ -963,6 +1022,7 @@ public class MainFrame extends javax.swing.JFrame {
         deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
         clearButton.setText("Clear");
+        clearButton.addActionListener(this::clearButtonActionPerformed);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Manage Tables");
@@ -1127,6 +1187,11 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         updateSelectedRow();
     }//GEN-LAST:event_updateButtonActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        // TODO add your handling code here:
+        clearFields();
+    }//GEN-LAST:event_clearButtonActionPerformed
 
     /**
      * @param args the command line arguments
