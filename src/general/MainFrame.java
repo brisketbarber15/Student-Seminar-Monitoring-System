@@ -20,6 +20,10 @@ import javax.swing.event.ListSelectionListener;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatClientProperties;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import javax.swing.SwingUtilities;
 /*
 validate in attendance if information entered existed
@@ -986,6 +990,80 @@ public class MainFrame extends javax.swing.JFrame {
         if (outputAttendance != null) SwingUtilities.updateComponentTreeUI(outputAttendance);
     }
     
+    private void exportData(){
+        String table = "";
+        String[] options = {"Student", "Seminar", "Attendance"};
+        
+        int choice = JOptionPane.showOptionDialog(
+            null,                              
+            "Which table would you like to export?", 
+            "Select Option",               
+            JOptionPane.DEFAULT_OPTION,      
+            JOptionPane.QUESTION_MESSAGE,       
+            null,                   
+            options,       
+            options[0]         
+        );
+
+        switch(choice){
+            case 0:
+                table = "Student";
+                break;
+            case 1:
+                table = "Seminar";
+                break;
+            case 2:
+                table = "Attendance";
+                break;
+            default:
+                JOptionPane.showMessageDialog(null, "You did not select any of the option.");
+                return;
+        }
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Save CSV File");
+        
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd_HHmmss").format(new java.util.Date());
+        chooser.setSelectedFile(new java.io.File("export_" + table + timestamp + ".csv"));
+        int userSelection = chooser.showSaveDialog(this);
+
+        if(userSelection == JFileChooser.APPROVE_OPTION){
+            File fileToSave = chooser.getSelectedFile();
+            String filePath = fileToSave.getAbsolutePath();
+          
+            String query = "SELECT * FROM " + table;
+
+            try(
+                 Connection con = DBConn.getConnection();
+                 Statement stmt = con.createStatement();
+                 ResultSet rs = stmt.executeQuery(query);
+                 PrintWriter pw = new PrintWriter(new FileWriter(filePath))
+            ){
+                ResultSetMetaData meta = rs.getMetaData();
+                int columnCount = meta.getColumnCount();
+
+                for(int i=1; i<=columnCount; i++){
+                    pw.print(meta.getColumnName(i));
+                    if (i < columnCount) pw.print(",");
+                }
+                pw.println();
+
+                while(rs.next()){
+                    for(int i=1; i<=columnCount; i++){
+                        pw.print(rs.getString(i));
+                        if(i < columnCount) pw.print(",");
+                    }
+                    pw.println();
+                }
+
+                JOptionPane.showMessageDialog(this, "Data exported successfully to:\n" + filePath);
+
+            }catch(Exception ex){
+                JOptionPane.showMessageDialog(this, "Error: " + ex.getMessage());
+            }
+        }
+    }
+    
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
@@ -1050,6 +1128,7 @@ public class MainFrame extends javax.swing.JFrame {
         titleLabel = new javax.swing.JLabel();
         aboutUsButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        exportButton = new javax.swing.JButton();
         sidePanel = new javax.swing.JPanel();
         studentButton = new javax.swing.JButton();
         seminarButton = new javax.swing.JButton();
@@ -1077,6 +1156,9 @@ public class MainFrame extends javax.swing.JFrame {
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/free-java-logo-icon-svg-download-png-1720088 (1).png"))); // NOI18N
 
+        exportButton.setText("Export to CSV");
+        exportButton.addActionListener(this::exportButtonActionPerformed);
+
         javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
         headerPanel.setLayout(headerPanelLayout);
         headerPanelLayout.setHorizontalGroup(
@@ -1086,19 +1168,26 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 209, Short.MAX_VALUE)
+                .addComponent(exportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(aboutUsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(14, 14, 14))
         );
         headerPanelLayout.setVerticalGroup(
             headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(headerPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(aboutUsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, headerPanelLayout.createSequentialGroup()
+                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(headerPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(headerPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(titleLabel)
+                            .addComponent(aboutUsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
+                            .addComponent(exportButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)))
                 .addContainerGap())
         );
 
@@ -1310,6 +1399,11 @@ public class MainFrame extends javax.swing.JFrame {
         updateUI();
     }//GEN-LAST:event_modeButtonActionPerformed
 
+    private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+        // TODO add your handling code here:
+        exportData();
+    }//GEN-LAST:event_exportButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1335,6 +1429,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton attendanceButton;
     private javax.swing.JButton clearButton;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton exportButton;
     private javax.swing.JPanel headerPanel;
     private javax.swing.JPanel inputPanel;
     private javax.swing.JLabel jLabel1;
