@@ -30,27 +30,177 @@ public class AboutUsFrame extends javax.swing.JFrame {
 
         aboutUsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        exitBtn = new javax.swing.JButton();
+        ryanTxt = new javax.swing.JLabel();
+        romaTxt = new javax.swing.JLabel();
+        romaTxt1 = new javax.swing.JLabel();
+        dash3 = new javax.swing.JLabel();
+        dash2 = new javax.swing.JLabel();
+        dash1 = new javax.swing.JLabel();
+        roleTxt1 = new javax.swing.JLabel();
+        roleTxt2 = new javax.swing.JLabel();
+        roleTxt3 = new javax.swing.JLabel();
+        emailTxt = new javax.swing.JLabel();
+        emailTxt1 = new javax.swing.JLabel();
+        emailTxt2 = new javax.swing.JLabel();
+        ageTxt = new javax.swing.JLabel();
+        ageTxt1 = new javax.swing.JLabel();
+        ageTxt2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel1.setText("Ryan Roma, Pauline");
+        jLabel1.setFont(new java.awt.Font("Cambria", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 0, 153));
+        jLabel1.setText("About Us");
+
+        exitBtn.setBackground(new java.awt.Color(0, 102, 204));
+        exitBtn.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
+        exitBtn.setText("Home");
+        exitBtn.addActionListener(this::exitBtnActionPerformed);
+
+        ryanTxt.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
+        ryanTxt.setForeground(new java.awt.Color(51, 0, 153));
+        ryanTxt.setText("Ryan Maglaque");
+
+        romaTxt.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
+        romaTxt.setForeground(new java.awt.Color(51, 0, 153));
+        romaTxt.setText("Roma Amor Tawatao");
+
+        romaTxt1.setFont(new java.awt.Font("Century Gothic", 1, 18)); // NOI18N
+        romaTxt1.setForeground(new java.awt.Color(51, 0, 153));
+        romaTxt1.setText("Pauline Salvador");
+
+        dash3.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        dash3.setText("BSIT 2-4");
+
+        dash2.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        dash2.setText("BSIT 2-4");
+
+        dash1.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        dash1.setText("BSIT 2-4");
+
+        roleTxt1.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        roleTxt1.setText("Programmer");
+
+        roleTxt2.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        roleTxt2.setText("Programmer");
+
+        roleTxt3.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        roleTxt3.setText("UI Designer");
+
+        emailTxt.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        emailTxt.setText("ryanmaglaque@clsu2.edu.ph");
+
+        emailTxt1.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        emailTxt1.setText("romatawatao@clsu2.edu.ph");
+
+        emailTxt2.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        emailTxt2.setText("paulinesalvador@clsu2.edu.ph");
+
+        ageTxt.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        ageTxt.setText("19 years old");
+
+        ageTxt1.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        ageTxt1.setText("19 years old");
+
+        ageTxt2.setFont(new java.awt.Font("Bahnschrift", 1, 12)); // NOI18N
+        ageTxt2.setText("19 years old");
 
         javax.swing.GroupLayout aboutUsPanelLayout = new javax.swing.GroupLayout(aboutUsPanel);
         aboutUsPanel.setLayout(aboutUsPanelLayout);
         aboutUsPanelLayout.setHorizontalGroup(
             aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, aboutUsPanelLayout.createSequentialGroup()
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, aboutUsPanelLayout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(emailTxt)
+                                    .addComponent(ryanTxt))
+                                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                        .addGap(103, 103, 103)
+                                        .addComponent(emailTxt1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(emailTxt2)
+                                        .addGap(17, 17, 17))
+                                    .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                        .addGap(0, 90, Short.MAX_VALUE)
+                                        .addComponent(romaTxt)
+                                        .addGap(107, 107, 107)
+                                        .addComponent(romaTxt1)
+                                        .addGap(27, 27, 27))))
+                            .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(exitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                        .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                .addGap(83, 83, 83)
+                                .addComponent(dash1))
+                            .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                .addGap(74, 74, 74)
+                                .addComponent(roleTxt1))
+                            .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                                .addGap(75, 75, 75)
+                                .addComponent(ageTxt)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, aboutUsPanelLayout.createSequentialGroup()
+                                .addComponent(dash3)
+                                .addGap(82, 82, 82))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, aboutUsPanelLayout.createSequentialGroup()
+                                .addComponent(roleTxt2)
+                                .addGap(206, 206, 206)
+                                .addComponent(roleTxt3)
+                                .addGap(73, 73, 73))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, aboutUsPanelLayout.createSequentialGroup()
+                                .addComponent(ageTxt1)
+                                .addGap(207, 207, 207)
+                                .addComponent(ageTxt2)
+                                .addGap(71, 71, 71)))))
+                .addGap(44, 44, 44))
             .addGroup(aboutUsPanelLayout.createSequentialGroup()
-                .addGap(42, 42, 42)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 604, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addGap(352, 352, 352)
+                .addComponent(dash2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         aboutUsPanelLayout.setVerticalGroup(
             aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, aboutUsPanelLayout.createSequentialGroup()
-                .addContainerGap(135, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(56, 56, 56))
+            .addGroup(aboutUsPanelLayout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(exitBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(29, 29, 29)
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ryanTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(romaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(romaTxt1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dash3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dash2)
+                    .addComponent(dash1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(roleTxt3, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(roleTxt2, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(roleTxt1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(emailTxt2)
+                    .addComponent(emailTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(emailTxt))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(aboutUsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ageTxt2)
+                    .addComponent(ageTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ageTxt))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -66,12 +216,20 @@ public class AboutUsFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(aboutUsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(aboutUsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
+        // TODO add your handling code here:
+        MainFrame home = new MainFrame();
+        home.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_exitBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -100,6 +258,22 @@ public class AboutUsFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel aboutUsPanel;
+    private javax.swing.JLabel ageTxt;
+    private javax.swing.JLabel ageTxt1;
+    private javax.swing.JLabel ageTxt2;
+    private javax.swing.JLabel dash1;
+    private javax.swing.JLabel dash2;
+    private javax.swing.JLabel dash3;
+    private javax.swing.JLabel emailTxt;
+    private javax.swing.JLabel emailTxt1;
+    private javax.swing.JLabel emailTxt2;
+    private javax.swing.JButton exitBtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel roleTxt1;
+    private javax.swing.JLabel roleTxt2;
+    private javax.swing.JLabel roleTxt3;
+    private javax.swing.JLabel romaTxt;
+    private javax.swing.JLabel romaTxt1;
+    private javax.swing.JLabel ryanTxt;
     // End of variables declaration//GEN-END:variables
 }

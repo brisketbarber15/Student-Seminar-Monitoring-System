@@ -17,8 +17,10 @@ import java.lang.Object;
 import java.time.LocalDate;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
-
+import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatClientProperties;
+import javax.swing.SwingUtilities;
 /*
 validate in attendance if information entered existed
 add exit program buton
@@ -28,6 +30,7 @@ about us
 
 public class MainFrame extends javax.swing.JFrame {
     int currentState;
+    int currentMode;
 
     private JTextField inputStudentId;
     private JTextField inputFirstName;
@@ -87,7 +90,7 @@ public class MainFrame extends javax.swing.JFrame {
     private JScrollPane outputSeminar;
     private JScrollPane outputAttendance;
     
-    private void intializeTables(){
+    private void intializeTables(){       
         String[] studentColumns = {
             "Student ID",
             "First Name",
@@ -271,7 +274,7 @@ public class MainFrame extends javax.swing.JFrame {
         inputVenue = new JTextField();
         inputDateTo = new JTextField();
         inputDateFrom = new JTextField();
-
+        
         promptSeminarId = new JLabel();
         promptTitle = new JLabel();
         promptVenue = new JLabel();
@@ -346,6 +349,8 @@ public class MainFrame extends javax.swing.JFrame {
         inputPanel.add(promptYearsLevel);
         inputPanel.add(inputYearLevel);
         
+        SwingUtilities.updateComponentTreeUI(inputPanel);
+        
         inputPanel.revalidate();
         inputPanel.repaint();
     }
@@ -366,6 +371,8 @@ public class MainFrame extends javax.swing.JFrame {
         inputPanel.add(inputDateTo);
         inputPanel.add(promptDateFrom);
         inputPanel.add(inputDateFrom);
+        
+        SwingUtilities.updateComponentTreeUI(inputPanel);
         
         inputPanel.revalidate();
         inputPanel.repaint();
@@ -389,6 +396,8 @@ public class MainFrame extends javax.swing.JFrame {
         inputPanel.add(inputSchoolYear);
         inputPanel.add(promptFee);
         inputPanel.add(inputFee);
+        
+        SwingUtilities.updateComponentTreeUI(inputPanel);
         
         inputPanel.revalidate();
         inputPanel.repaint();
@@ -925,6 +934,58 @@ public class MainFrame extends javax.swing.JFrame {
         return null;
     }
     
+    private void updateUI(){
+        if(currentMode == 1){
+            com.formdev.flatlaf.FlatDarkLaf.setup();
+            currentMode = 2;
+            modeButton.setText("Light Mode");
+            modeButton.setBackground(new Color(70, 70, 70));
+        }else{
+            com.formdev.flatlaf.FlatLightLaf.setup();
+            currentMode = 1;
+            modeButton.setText("Dark Mode");
+            modeButton.setBackground(new Color(255, 255, 255));
+        }
+
+        com.formdev.flatlaf.FlatLaf.updateUI();
+        updateHiddenInputComponents();
+    }
+    
+    private void updateHiddenInputComponents() {
+        if (inputStudentId != null) {
+            SwingUtilities.updateComponentTreeUI(inputStudentId);
+            SwingUtilities.updateComponentTreeUI(inputFirstName);
+            SwingUtilities.updateComponentTreeUI(inputMiddleInitial);
+            SwingUtilities.updateComponentTreeUI(inputLastName);
+            SwingUtilities.updateComponentTreeUI(inputAge);
+            SwingUtilities.updateComponentTreeUI(inputGender);
+            SwingUtilities.updateComponentTreeUI(inputAddress);
+            SwingUtilities.updateComponentTreeUI(inputCourse);
+            SwingUtilities.updateComponentTreeUI(inputYearLevel);
+        }
+
+        if (inputSeminarId != null) {
+            SwingUtilities.updateComponentTreeUI(inputSeminarId);
+            SwingUtilities.updateComponentTreeUI(inputTitle);
+            SwingUtilities.updateComponentTreeUI(inputVenue);
+            SwingUtilities.updateComponentTreeUI(inputDateTo);
+            SwingUtilities.updateComponentTreeUI(inputDateFrom);
+        }
+
+        if (inputAttendanceId != null) {
+            SwingUtilities.updateComponentTreeUI(inputAttendanceId);
+            SwingUtilities.updateComponentTreeUI(inputStudentName);
+            SwingUtilities.updateComponentTreeUI(inputSeminarTitle);
+            SwingUtilities.updateComponentTreeUI(inputSemester);
+            SwingUtilities.updateComponentTreeUI(inputSchoolYear);
+            SwingUtilities.updateComponentTreeUI(inputFee);
+        }
+
+        if (outputStudent != null) SwingUtilities.updateComponentTreeUI(outputStudent);
+        if (outputSeminar != null) SwingUtilities.updateComponentTreeUI(outputSeminar);
+        if (outputAttendance != null) SwingUtilities.updateComponentTreeUI(outputAttendance);
+    }
+    
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainFrame.class.getName());
 
@@ -933,13 +994,44 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {      
         currentState = 1;
+        currentMode = 1;
         
         initComponents();
         
+        headerPanel.setBorder(null);
+        sidePanel.setBorder(null);
+        outputPanel.setBorder(null);
+        inputPanel.setBorder(null);
+        mainPanel.setBorder(null);
+
+        headerPanel.putClientProperty(FlatClientProperties.STYLE, "arc: 16; border: 1,1,1,1,#c8c8c8,1,16");
+        sidePanel.putClientProperty(FlatClientProperties.STYLE, "arc: 16; border: 1,1,1,1,#c8c8c8,1,16");
+        outputPanel.putClientProperty(FlatClientProperties.STYLE, "arc: 16; border: 1,1,1,1,#c8c8c8,1,16");
+        inputPanel.putClientProperty(FlatClientProperties.STYLE, "arc: 16; border: 1,1,1,1,#c8c8c8,1,16");
+        
+        addButton.putClientProperty(FlatClientProperties.STYLE, 
+            "background: #3399FF; foreground: #FFFFFF; focusedBackground: #2680E0; hoverBackground: #52A8FF");
+
+        updateButton.putClientProperty(FlatClientProperties.STYLE, 
+            "background: #2E7D32; foreground: #FFFFFF; focusedBackground: #1B5E20; hoverBackground: #388E3C");
+
+        deleteButton.putClientProperty(FlatClientProperties.STYLE, 
+            "background: #D32F2F; foreground: #FFFFFF; focusedBackground: #B71C1C; hoverBackground: #E53935");
+
+        clearButton.putClientProperty(FlatClientProperties.STYLE, 
+            "background: #757575; foreground: #FFFFFF; focusedBackground: #616161; hoverBackground: #8E8E8E");
+
         intializeTables();
         initializeInputFieldsForStudent();
         initializeInputFieldsForSeminar();
         initializeInputFieldsForAttendance();
+        
+        clearFields();
+        currentState = 2;
+        clearFields();
+        currentState = 3;
+        clearFields();
+        currentState = 1;
         
         createInputFieldForStudent();
     }
@@ -957,6 +1049,7 @@ public class MainFrame extends javax.swing.JFrame {
         headerPanel = new javax.swing.JPanel();
         titleLabel = new javax.swing.JLabel();
         aboutUsButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
         sidePanel = new javax.swing.JPanel();
         studentButton = new javax.swing.JButton();
         seminarButton = new javax.swing.JButton();
@@ -968,12 +1061,13 @@ public class MainFrame extends javax.swing.JFrame {
         clearButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        modeButton = new javax.swing.JButton();
         outputPanel = new javax.swing.JPanel();
         inputPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Header Panel"));
+        headerPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         titleLabel.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         titleLabel.setText("Student-Seminar Recording System");
@@ -981,27 +1075,34 @@ public class MainFrame extends javax.swing.JFrame {
         aboutUsButton.setText("About Us");
         aboutUsButton.addActionListener(this::aboutUsButtonActionPerformed);
 
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/free-java-logo-icon-svg-download-png-1720088 (1).png"))); // NOI18N
+
         javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
         headerPanel.setLayout(headerPanelLayout);
         headerPanelLayout.setHorizontalGroup(
             headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(headerPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 399, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
                 .addComponent(aboutUsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         headerPanelLayout.setVerticalGroup(
             headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, headerPanelLayout.createSequentialGroup()
-                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                    .addComponent(aboutUsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(headerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(titleLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(aboutUsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
-        sidePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Side Panel"));
+        sidePanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         studentButton.setText("Student");
         studentButton.addActionListener(this::studentButtonActionPerformed);
@@ -1012,15 +1113,19 @@ public class MainFrame extends javax.swing.JFrame {
         attendanceButton.setText("Attendance");
         attendanceButton.addActionListener(this::attendanceButtonActionPerformed);
 
+        addButton.setBackground(new java.awt.Color(51, 153, 255));
         addButton.setText("Add");
         addButton.addActionListener(this::addButtonActionPerformed);
 
+        updateButton.setBackground(new java.awt.Color(153, 255, 153));
         updateButton.setText("Update Selected");
         updateButton.addActionListener(this::updateButtonActionPerformed);
 
+        deleteButton.setBackground(new java.awt.Color(255, 153, 153));
         deleteButton.setText("Delete Selected");
         deleteButton.addActionListener(this::deleteButtonActionPerformed);
 
+        clearButton.setBackground(new java.awt.Color(153, 153, 153));
         clearButton.setText("Clear");
         clearButton.addActionListener(this::clearButtonActionPerformed);
 
@@ -1028,33 +1133,37 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel1.setText("Manage Tables");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel2.setText("Operate");
+        jLabel2.setText("Actions");
+
+        modeButton.setText("Dark Mode");
+        modeButton.addActionListener(this::modeButtonActionPerformed);
 
         javax.swing.GroupLayout sidePanelLayout = new javax.swing.GroupLayout(sidePanel);
         sidePanel.setLayout(sidePanelLayout);
         sidePanelLayout.setHorizontalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sidePanelLayout.createSequentialGroup()
+            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(addButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(studentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(seminarButton, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(attendanceButton, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                    .addComponent(jSeparator1)
-                    .addComponent(updateButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(deleteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(clearButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(modeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(studentButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(seminarButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                    .addComponent(attendanceButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
+                    .addComponent(updateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deleteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sidePanelLayout.setVerticalGroup(
             sidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sidePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(15, 15, 15)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(studentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(seminarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1063,7 +1172,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1072,13 +1181,15 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(deleteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48))
+                .addGap(28, 28, 28)
+                .addComponent(modeButton)
+                .addContainerGap())
         );
 
-        outputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Panel"));
+        outputPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         outputPanel.setLayout(new java.awt.BorderLayout());
 
-        inputPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Input Panel"));
+        inputPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         inputPanel.setLayout(new java.awt.GridLayout(3, 6, 5, 5));
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
@@ -1091,10 +1202,10 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(headerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(sidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(inputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(inputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         mainPanelLayout.setVerticalGroup(
@@ -1107,8 +1218,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addComponent(outputPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(inputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(inputPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1124,8 +1234,7 @@ public class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -1142,6 +1251,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void studentButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_studentButtonActionPerformed
         // TODO add your handling code here:
+        com.formdev.flatlaf.FlatLaf.updateUI();
         currentState = 1;
         createInputFieldForStudent();
         displayTable();
@@ -1149,6 +1259,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void seminarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seminarButtonActionPerformed
         // TODO add your handling code here:
+        com.formdev.flatlaf.FlatLaf.updateUI();
         currentState = 2;
         createInputFieldForSeminar();
         displayTable();
@@ -1156,6 +1267,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void attendanceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attendanceButtonActionPerformed
         // TODO add your handling code here:
+        com.formdev.flatlaf.FlatLaf.updateUI();
         currentState = 3;
         createInputFieldForAttendance();
         displayTable();
@@ -1193,26 +1305,25 @@ public class MainFrame extends javax.swing.JFrame {
         clearFields();
     }//GEN-LAST:event_clearButtonActionPerformed
 
+    private void modeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modeButtonActionPerformed
+        // TODO add your handling code here:
+        updateUI();
+    }//GEN-LAST:event_modeButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
+        com.formdev.flatlaf.FlatLightLaf.setup();
+        
+        UIManager.put("Button.arc", 30);
+        UIManager.put("Component.arc", 12);
+        UIManager.put("Button.arc", 12);
+        UIManager.put("TextComponent.arc", 8);
+        UIManager.put("Table.alternateRowColor", new Color(245, 247, 250));
+        UIManager.put("Table.showHorizontalLines", true);
+        UIManager.put("Table.showVerticalLines", false);
+        
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new MainFrame().setVisible(true));
@@ -1228,8 +1339,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel inputPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JButton modeButton;
     private javax.swing.JPanel outputPanel;
     private javax.swing.JButton seminarButton;
     private javax.swing.JPanel sidePanel;
